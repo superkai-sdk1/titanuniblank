@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Mafia Game</title>
+	<link rel="stylesheet" href="css/mafia.css">
+	<link rel="stylesheet" href="css/styles.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="js/jquery-ui.js"></script>
+	<script src="js/drupal.js"></script>
+	<script src="js/table.js"></script>
+	<script src="js/players.js"></script>
+	<script src="js/timer.js"></script>
+	<script src="js/game.js"></script>
+	<script src="js/body.js"></script>
+	<link rel="manifest" href="/manifest.json">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="theme-color" content="#000000">
+	<link rel="apple-touch-icon" href="/images/icon/apple-touch-icon.png">
+	<link rel="android-chrome-192x192" href="/images/icon/android-chrome-192x192.png">
+	<script src="https://telegram.org/js/telegram-web-app.js"></script>
+	<script>
+		$(document).ready(function() {
+			const tg = window.Telegram.WebApp;
+			if (tg) {
+				tg.ready();
+				tg.MainButton.text = "Начать игру";
+				tg.MainButton.show();
+				tg.MainButton.onClick(function() {
+					alert('Telegram MainButton clicked!');
+				});
+			}
+		});
+	</script>
+
+	<script>
+		// Переменная для хранения текущего аудио
+		let currentAudio = null;
+
+		// Функция для воспроизведения аудио
+		function playAudio(src) {
+			// Останавливаем текущее аудио, если оно воспроизводится
+			if (currentAudio) {
+				currentAudio.pause();
+				currentAudio.currentTime = 0;
+			}
+			// Создаем новый объект аудио и воспроизводим
+			currentAudio = new Audio(src);
+			currentAudio.play();
+		}
+
+		// Функция для остановки аудио
+		function stopAudio() {
+			if (currentAudio) {
+				currentAudio.pause();
+				currentAudio.currentTime = 0;
+			}
+		}
+	</script>
+</head>
+<body>
+<div class="timer-container">
+	<div id="timer-display" class="timer-display">00:00</div>
+	<div class="timer-controls">
+		<button class="material-button large-button" onclick="startTimer(60)">1 мин</button>
+		<button class="material-button large-button" onclick="startTimer(30)">30 сек</button>
+		<button class="material-button large-button" onclick="pauseTimer()">Пауза</button>
+		<button class="material-button large-button" onclick="resumeTimer()">Продолжить</button>
+		<button class="material-button large-button" onclick="stopTimer()">Стоп</button>
+	</div>
+
+	<div class="audio-controls">
+		<button class="material-button small-button" onclick="playAudio('tts/destributephase.mp3')">
+			<img src="/blank/images/desrtibute.svg" alt="Раздача" class="audio-icon">
+		</button>
+		<button class="material-button small-button" onclick="playAudio('tts/killphase.mp3')">
+			<img src="/blank/images/kill.svg" alt="Стрельба" class="audio-icon">
+		</button>
+		<button class="material-button small-button" onclick="playAudio('tts/donphase.mp3')">
+			<img src="/blank/images/don.svg" alt="Дон" class="audio-icon">
+		</button>
+		<button class="material-button small-button" onclick="playAudio('tts/sherphase.mp3')">
+			<img src="/blank/images/sheriff.svg" alt="Шериф" class="audio-icon">
+		</button>
+		<button class="material-button small-button" onclick="stopAudio()">
+			<img src="/blank/images/stop.svg" alt="Стоп" class="audio-icon">
+		</button>
+	</div>
+</div>
+
+<div class="music-controls">
+	<button class="material-button small-button" id="playRandomMusic">
+		<img src="/blank/images/play.svg" alt="Play" class="audio-icon">
+	</button>
+	<input type="range" id="musicVolume" min="0" max="1" step="0.01" value="0.5" class="volume-slider">
+	<button class="material-button small-button" id="stopMusic">
+		<img src="/blank/images/stopmusic.svg" alt="Stop" class="audio-icon">
+	</button>
+</div>
+
+<div class="main-game-table-wrapper table-wrapper"></div>
+
+<script>
+	jQuery(function () {
+		const nicknames = [
+			"AMOR", "Asia", "Alien", "Alinellas", "Animag", "Bittir", "Black", "Black Jack", "DULASHA", "Dill",
+			"Dizi", "Dushman", "EL", "Fox", "Gremlin", "Geralt", "Gestalter", "Hisoka", "Ivory", "Kai",
+			"LIRICA", "Miamore", "Mulan", "Neo", "ProDoc", "Shinobi", "Soza", "Saul Goodman", "Scorpion",
+			"TONI MONTANA", "Tam", "ZONDR", "evil", "finnick", "Йору", "Адвокат", "Альтман", "Альфа", "Асур",
+			"Бес", "Биполярка", "Булочка", "Валькирия", "Великая", "228Данте69", "Даня", "Дита", "Добрый",
+			"Дэва", "Ева", "Завклубом", "Зайка", "Зара", "Знаток", "Зёма", "Кари", "Кир", "Кира", "Кобра",
+			"Кову", "Копибара", "Коссмос", "Красавчик", "Лазер", "Лестер", "Лимонная долька", "Белый склон",
+			"Луи", "Мрак", "Маркетолог", "Марсело", "Мау", "Мафия", "Минахор", "Нафиля", "Окси", "Пантера",
+			"Паранойя", "Подкова", "Подсолнух", "Психолог", "Рокфор", "Руди", "Скорпион", "Саид", "Саймон",
+			"Салливан", "Сатору", "Светлячек", "Сирена", "Смурфик", "Статистика", "Темир", "Типсон",
+			"Томас Шелби", "Учитель", "Феникс", "Физик", "Фил", "Хейтер", "Штиль", "Элис"
+		];
+
+		jQuery(".user_entity_acp").autocomplete({
+			source: nicknames
+		});
+	});
+</script>
+
+<div class="vote-wrapper">
+	<div class="vote-table-wrapper">
+		<table class="vote-table" cellspacing="5">
+			<tbody>
+			<tr id="vt_0" class="voute_line" data-act="0" data-line="0">
+				<td id="vv_0" class="voute_p" data-delta="0"></td>
+				<td class="vote_butt" data-line="0" data-pos="0">1</td>
+				<td class="vote_butt" data-line="0" data-pos="1">2</td>
+				<td class="vote_butt" data-line="0" data-pos="2">3</td>
+				<td class="vote_butt" data-line="0" data-pos="3">4</td>
+				<td class="vote_butt" data-line="0" data-pos="4">5</td>
+				<td class="vote_butt" data-line="0" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_1" class="voute_line" data-act="0" data-line="1">
+				<td id="vv_1" class="voute_p" data-delta="1"></td>
+				<td class="vote_butt" data-line="1" data-pos="0">1</td>
+				<td class="vote_butt" data-line="1" data-pos="1">2</td>
+				<td class="vote_butt" data-line="1" data-pos="2">3</td>
+				<td class="vote_butt" data-line="1" data-pos="3">4</td>
+				<td class="vote_butt" data-line="1" data-pos="4">5</td>
+				<td class="vote_butt" data-line="1" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_2" class="voute_line" data-act="0" data-line="2">
+				<td id="vv_2" class="voute_p" data-delta="2"></td>
+				<td class="vote_butt" data-line="2" data-pos="0">1</td>
+				<td class="vote_butt" data-line="2" data-pos="1">2</td>
+				<td class="vote_butt" data-line="2" data-pos="2">3</td>
+				<td class="vote_butt" data-line="2" data-pos="3">4</td>
+				<td class="vote_butt" data-line="2" data-pos="4">5</td>
+				<td class="vote_butt" data-line="2" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_3" class="voute_line" data-act="0" data-line="3">
+				<td id="vv_3" class="voute_p" data-delta="3"></td>
+				<td class="vote_butt" data-line="3" data-pos="0">1</td>
+				<td class="vote_butt" data-line="3" data-pos="1">2</td>
+				<td class="vote_butt" data-line="3" data-pos="2">3</td>
+				<td class="vote_butt" data-line="3" data-pos="3">4</td>
+				<td class="vote_butt" data-line="3" data-pos="4">5</td>
+				<td class="vote_butt" data-line="3" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_4" class="voute_line" data-act="0" data-line="4">
+				<td id="vv_4" class="voute_p" data-delta="4"></td>
+				<td class="vote_butt" data-line="4" data-pos="0">1</td>
+				<td class="vote_butt" data-line="4" data-pos="1">2</td>
+				<td class="vote_butt" data-line="4" data-pos="2">3</td>
+				<td class="vote_butt" data-line="4" data-pos="3">4</td>
+				<td class="vote_butt" data-line="4" data-pos="4">5</td>
+				<td class="vote_butt" data-line="4" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_5" class="voute_line" data-act="0" data-line="5">
+				<td id="vv_5" class="voute_p" data-delta="5"></td>
+				<td class="vote_butt" data-line="5" data-pos="0">1</td>
+				<td class="vote_butt" data-line="5" data-pos="1">2</td>
+				<td class="vote_butt" data-line="5" data-pos="2">3</td>
+				<td class="vote_butt" data-line="5" data-pos="3">4</td>
+				<td class="vote_butt" data-line="5" data-pos="4">5</td>
+				<td class="vote_butt" data-line="5" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_6" class="voute_line" data-act="0" data-line="6">
+				<td id="vv_6" class="voute_p" data-delta="6"></td>
+				<td class="vote_butt" data-line="6" data-pos="0">1</td>
+				<td class="vote_butt" data-line="6" data-pos="1">2</td>
+				<td class="vote_butt" data-line="6" data-pos="2">3</td>
+				<td class="vote_butt" data-line="6" data-pos="3">4</td>
+				<td class="vote_butt" data-line="6" data-pos="4">5</td>
+				<td class="vote_butt" data-line="6" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_7" class="voute_line" data-act="0" data-line="7">
+				<td id="vv_7" class="voute_p" data-delta="7"></td>
+				<td class="vote_butt" data-line="7" data-pos="0">1</td>
+				<td class="vote_butt" data-line="7" data-pos="1">2</td>
+				<td class="vote_butt" data-line="7" data-pos="2">3</td>
+				<td class="vote_butt" data-line="7" data-pos="3">4</td>
+				<td class="vote_butt" data-line="7" data-pos="4">5</td>
+				<td class="vote_butt" data-line="7" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_8" class="voute_line" data-act="0" data-line="8">
+				<td id="vv_8" class="voute_p" data-delta="8"></td>
+				<td class="vote_butt" data-line="8" data-pos="0">1</td>
+				<td class="vote_butt" data-line="8" data-pos="1">2</td>
+				<td class="vote_butt" data-line="8" data-pos="2">3</td>
+				<td class="vote_butt" data-line="8" data-pos="3">4</td>
+				<td class="vote_butt" data-line="8" data-pos="4">5</td>
+				<td class="vote_butt" data-line="8" data-pos="5">6+</td>
+			</tr>
+			<tr id="vt_9" class="voute_line" data-act="0" data-line="9">
+				<td id="vv_9" class="voute_p" data-delta="9"></td>
+				<td class="vote_butt" data-line="9" data-pos="0">1</td>
+				<td class="vote_butt" data-line="9" data-pos="1">2</td>
+				<td class="vote_butt" data-line="9" data-pos="2">3</td>
+				<td class="vote_butt" data-line="9" data-pos="3">4</td>
+				<td class="vote_butt" data-line="9" data-pos="4">5</td>
+				<td class="vote_butt" data-line="9" data-pos="5">6+</td>
+			</tr>
+			<tr id="save_day">
+				<td class="voute_line" colspan="7">Сохранить день</td>
+			</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<div id="vote_res" data-line="0">
+	<div id="vr_l0" data-day="0" style="display:none;" class="vote_day"></div>
+</div>
+
+<div class="menu-content" id="menuContent">
+	<button class="menu-cont-button" id="settingsToggle">Роли и баллы</button>
+	<button class="menu-cont-button" id="shuffleButton">Рассадка</button>
+	<button class="menu-cont-button" id="distributeButton">Распределить роли</button>
+	<button type="button" class="menu-cont-button" id="mafia">Победа Мафии</button>
+	<button type="button" class="menu-cont-button" id="citizens">Победа Мирных</button>
+	<button class="menu-cont-button" id="resetAllForms">Новая игра</button>
+	<button class="menu-cont-button" id="saveGameButton">Сохранить игру</button>
+</div>
+
+<!-- Модальное окно подтверждения -->
+<div id="confirmation-modal" class="modal">
+	<div class="modal-content">
+		<h2>Подтверждение</h2>
+		<p>Вы действительно хотите сохранить игру и отправить результаты в Telegram?</p>
+		<div class="modal-buttons">
+			<button id="confirm-save" class="settings-toggle-button">Да</button>
+			<button id="cancel-save" class="settings-toggle-button">Нет</button>
+		</div>
+	</div>
+</div>
+
+<script>
+	// Переменная для хранения победителя
+	let winner = ''; // По умолчанию победитель не выбран
+
+	// Обработчик для кнопки "Победа Мафии"
+	document.getElementById('mafia').addEventListener('click', function() {
+		winner = 'm'; // Устанавливаем победителя — мафия
+	});
+
+	// Обработчик для кнопки "Победа Мирных"
+	document.getElementById('citizens').addEventListener('click', function() {
+		winner = 'c'; // Устанавливаем победителя — мирные
+	});
+
+	// Обработчик для кнопки "Сохранить игру"
+	document.getElementById('saveGameButton').addEventListener('click', function() {
+		// Показываем модальное окно подтверждения
+		const confirmationModal = document.getElementById('confirmation-modal');
+		confirmationModal.style.display = 'block';
+	});
+
+	// Обработчик для кнопки "Да" в модальном окне
+	document.getElementById('confirm-save').addEventListener('click', function() {
+		// Скрываем модальное окно
+		const confirmationModal = document.getElementById('confirmation-modal');
+		confirmationModal.style.display = 'none';
+
+		// Создаем контейнер для вывода результатов
+		const resultContainer = document.createElement('div');
+		resultContainer.id = 'gameResult';
+		resultContainer.style.marginTop = '20px';
+		resultContainer.style.padding = '10px';
+		resultContainer.style.backgroundColor = 'rgba(249,249,249,0)';
+		resultContainer.style.border = '1px solid #ccc';
+
+		// Заголовок результата
+		const resultHeader = document.createElement('h3');
+		resultHeader.textContent = 'Результат игры:';
+		resultContainer.appendChild(resultHeader);
+
+		// Получаем никнейм пользователя, запустившего приложение
+		const tg = window.Telegram.WebApp;
+		const userNickname = tg.initDataUnsafe.user?.username || 'Неизвестный пользователь';
+
+		// Получаем текущую дату и время
+		const now = new Date();
+		const day = now.getDate(); // День
+		const month = now.toLocaleString('ru-RU', { month: 'long' }); // Месяц буквами
+		const year = now.getFullYear(); // Год
+		const hours = String(now.getHours()).padStart(2, '0'); // Часы
+		const minutes = String(now.getMinutes()).padStart(2, '0'); // Минуты
+
+		// Форматируем дату и время
+		const formattedDateTime = `${day} ${month} ${year}, ${hours}:${minutes}`;
+
+		// Собираем данные по каждому игроку
+		let resultText = `Результат игры:\nСудья: @${userNickname}\nДата: ${formattedDateTime}\n\n`;
+		for (let i = 0; i < 10; i++) {
+			// Получаем никнейм
+			const nicknameElement = document.querySelector(`.nick_acpl[data-delta="${i}"]`);
+			const nickname = nicknameElement ? nicknameElement.value : 'Нет данных';
+
+			// Получаем роль и форматируем её
+			const roleElement = document.getElementById(`role_view_${i}`);
+			let role = roleElement ? roleElement.innerHTML.trim() : 'Нет данных';
+			role = role.replace(/М/g, 'Мафия')      // Заменяем М на Мафия
+					.replace(/Д/g, 'Дон')         // Заменяем Д на Дон
+					.replace(/Ш/g, 'Шериф')      // Заменяем Ш на Шериф
+					.replace(/К/g, 'Мирный'); // Заменяем К на Мирный
+
+			// Получаем лучший ход (если есть)
+			const bestMoveElement = document.getElementById(`best_move_${i}`);
+			let bestMove = '';
+			if (bestMoveElement && bestMoveElement.value) {
+				const bestMovePlayers = bestMoveElement.value.split(',').map(Number); // Номера игроков в ЛХ
+				const mafiaCount = bestMovePlayers.filter(player => {
+					const playerRoleElement = document.getElementById(`role_view_${player - 1}`);
+					const playerRole = playerRoleElement ? playerRoleElement.innerHTML.trim() : '';
+					return playerRole === 'М' || playerRole === 'Д'; // Проверяем, мафия или дон
+				}).length;
+
+				bestMove = ` (ЛХ: ${bestMoveElement.value} - ${mafiaCount})`; // Форматируем ЛХ
+			}
+
+			// Получаем основные баллы
+			const pointsElement = document.getElementById(`points_${i}`);
+			const points = pointsElement ? pointsElement.value : '0';
+
+			// Получаем дополнительные баллы
+			const addPointsElement = document.getElementById(`add_points_${i}`);
+			const addPoints = addPointsElement ? addPointsElement.value : '0';
+
+			// Рассчитываем итоговый балл
+			const total = (parseFloat(points) + parseFloat(addPoints)).toFixed(2);
+
+			// Формируем строку с результатом в новом формате
+			resultText += `${i + 1}. ${nickname} - ${role}${bestMove} | ${points} + ${addPoints} = ${total}\n`;
+		}
+
+		// Добавляем информацию о победителе
+		if (winner === 'm') {
+			resultText += '\nПобедила Мафия!';
+		} else if (winner === 'c') {
+			resultText += '\nПобедили Мирные!';
+		} else {
+			resultText += '\nПобедитель не выбран!';
+		}
+
+		// Отправка результата в Telegram
+		if (tg) {
+			const chatId = tg.initDataUnsafe.user?.id; // Получаем chat_id пользователя
+			if (chatId) {
+				const botToken = '7656955712:AAHqAzwzatfGif1fL7tNcTvYpfGsDKeE_nE';
+				const apiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+
+				fetch(apiUrl, {
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						chat_id: chatId,
+						text: resultText,
+					}),
+				})
+						.then(response => response.json())
+						.then(data => {
+							console.log('Сообщение отправлено:', data);
+							alert('Результаты успешно отправлены в Telegram!');
+						})
+						.catch(error => {
+							console.error('Ошибка при отправке сообщения:', error);
+							alert('Произошла ошибка при отправке результатов.');
+						});
+			} else {
+				console.error('chat_id не найден');
+			}
+		}
+
+		// Удаляем старый результат, если он есть
+		const oldResult = document.getElementById('gameResult');
+		if (oldResult) {
+			oldResult.remove();
+		}
+
+		// Добавляем результат на страницу
+		document.body.appendChild(resultContainer);
+	});
+
+	// Обработчик для кнопки "Нет" в модальном окне
+	document.getElementById('cancel-save').addEventListener('click', function() {
+		// Скрываем модальное окно
+		const confirmationModal = document.getElementById('confirmation-modal');
+		confirmationModal.style.display = 'none';
+	});
+</script>
+<script>
+	// Список песен в папке /music/
+	const musicFiles = [
+		'music/_(1).mp3',
+		'music/_(10).mp3',
+		'music/_(11).mp3',
+		'music/_(12).mp3',
+		'music/_(13).mp3',
+		'music/_(14).mp3',
+		'music/_(15).mp3',
+		'music/_(16).mp3',
+		'music/_(17).mp3',
+		'music/_(18).mp3',
+		'music/_(19).mp3',
+		'music/_(2).mp3',
+		'music/_(20).mp3',
+		'music/_(21).mp3',
+		'music/_(22).mp3',
+		'music/_(23).mp3',
+		'music/_(24).mp3',
+		'music/_(25).mp3',
+		'music/_(26).mp3',
+		'music/_(27).mp3',
+		'music/_(28).mp3',
+		'music/_(29).mp3',
+		'music/_(3).mp3',
+		'music/_(30).mp3',
+		'music/_(31).mp3',
+		'music/_(32).mp3',
+		'music/_(33).mp3',
+		'music/_(34).mp3',
+		'music/_(35).mp3',
+		'music/_(36).mp3',
+		'music/_(37).mp3',
+		'music/_(38).mp3',
+		'music/_(39).mp3',
+		'music/_(4).mp3',
+		'music/_(40).mp3',
+		'music/_(41).mp3',
+		'music/_(42).mp3',
+		'music/_(43).mp3',
+		'music/_(44).mp3',
+		'music/_(45).mp3',
+		'music/_(46).mp3',
+		'music/_(47).mp3',
+		'music/_(48).mp3',
+		'music/_(49).mp3',
+		'music/_(5).mp3',
+		'music/_(50).mp3',
+		'music/_(51).mp3',
+		'music/_(52).mp3',
+		'music/_(53).mp3',
+		'music/_(54).mp3',
+		'music/_(55).mp3',
+		'music/_(56).mp3',
+		'music/_(57).mp3',
+		'music/_(58).mp3',
+		'music/_(59).mp3',
+		'music/_(6).mp3',
+		'music/_(60).mp3',
+		'music/_(61).mp3',
+		'music/_(62).mp3',
+		'music/_(63).mp3',
+		'music/_(64).mp3',
+		'music/_(65).mp3',
+		'music/_(66).mp3',
+		'music/_(67).mp3',
+		'music/_(68).mp3',
+		'music/_(69).mp3',
+		'music/_(7).mp3',
+		'music/_(70).mp3',
+		'music/_(71).mp3',
+		'music/_(72).mp3',
+		'music/_(73).mp3',
+		'music/_(74).mp3',
+		'music/_(75).mp3',
+		'music/_(76).mp3',
+		'music/_(77).mp3',
+		'music/_(78).mp3',
+		'music/_(79).mp3',
+		'music/_(8).mp3',
+		'music/_(80).mp3',
+		'music/_(81).mp3',
+		'music/_(82).mp3',
+		'music/_(83).mp3',
+		'music/_(84).mp3',
+		'music/_(85).mp3',
+		'music/_(86).mp3',
+		'music/_(87).mp3',
+		'music/_(88).mp3',
+		'music/_(89).mp3',
+		'music/_(9).mp3',
+		'music/_(90).mp3',
+		'music/_(91).mp3',
+		'music/_(92).mp3',
+		'music/_(93).mp3',
+		'music/_(94).mp3',
+		'music/_(95).mp3',
+		'music/_(96).mp3',
+		'music/_(97).mp3',
+		'music/_(98).mp3',
+		'music/_(99).mp3'
+	];
+
+	let musicAudio = null;
+
+	// Функция для воспроизведения случайной песни
+	function playRandomMusic() {
+		if (musicAudio) {
+			musicAudio.pause();
+			musicAudio.currentTime = 0;
+		}
+
+		const randomIndex = Math.floor(Math.random() * musicFiles.length);
+		const randomMusic = musicFiles[randomIndex];
+		musicAudio = new Audio(randomMusic);
+		musicAudio.volume = document.getElementById('musicVolume').value;
+		musicAudio.play();
+	}
+
+	// Функция для остановки музыки
+	function stopMusic() {
+		if (musicAudio) {
+			musicAudio.pause();
+			musicAudio.currentTime = 0;
+		}
+	}
+
+	// Обработчики для кнопок Play и Stop
+	document.getElementById('playRandomMusic').addEventListener('click', playRandomMusic);
+	document.getElementById('stopMusic').addEventListener('click', stopMusic);
+
+	// Обработчик для ползунка громкости
+	document.getElementById('musicVolume').addEventListener('input', function() {
+		if (musicAudio) {
+			musicAudio.volume = this.value;
+		}
+	});
+</script>
+
+</body>
+</html>
