@@ -1,0 +1,788 @@
+:root {
+    --md-primary: rgba(74, 30, 172, 0.7); /* Основной фиолетовый */
+    --md-primary-variant: rgba(108, 71, 251, 0.7); /* Темно-фиолетовый */
+    --md-secondary: #6200EA; /* Вторичный фиолетовый */
+    --md-background: #121212; /* Темный фон */
+    --md-surface: #1E1E1E; /* Поверхность */
+    --md-surface-2: #232323; /* Поверхность второго уровня */
+    --md-error: #CF6679;
+    --md-text-primary: rgba(228, 228, 228, 0.87);
+    --md-text-secondary: rgba(255,255,255,0.60);
+    --md-elevation-1: 0 2px 4px rgba(0,0,0,0.4);
+    --md-elevation-2: 0 4px 8px rgba(0,0,0,0.4);
+    --md-radius: 16px;
+    --md-transition: all 0.2s ease;
+}
+
+body {
+    font-family: "Inter";
+    background: var(--md-background);
+    color: var(--md-text-primary);
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    overflow-x: hidden;
+}
+
+.miss_clik {
+    width: 27px;
+    height: 22px;
+    background: url(../images/gun-miss.png);
+    cursor: pointer;
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.miss_clik:hover {
+    transform: scale(1.1);
+}
+
+#miss-table {
+    border: none;
+    border-collapse: separate;
+    width: 100%;
+}
+
+#miss-table tbody {
+    border: none;
+}
+
+#miss-table td {
+    width: 20px;
+    height: 24px;
+    margin: 5px;
+    border: 1px solid var(--md-primary); /* Фиолетовая граница */
+    border-radius: var(--md-radius);
+}
+
+#miss-table #miss-button {
+    width: 29px;
+    background: url(../images/gun-miss.png);
+    background-position: -27px 0;
+    background-repeat: no-repeat;
+    cursor: pointer;
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#miss-table #miss-button:hover {
+    transform: scale(1.1);
+}
+
+.miss_clik.miss_0 {
+    background-position: 0 0;
+}
+
+.miss_clik.miss_1 {
+    background-position: 27px 0;
+}
+
+.tr_seats {
+    max-width: 300px;
+}
+
+.tr_seats td {
+    border: 1px solid var(--md-primary); /* Фиолетовая граница */
+    border-radius: var(--md-radius);
+    padding: 8px;
+}
+
+#rate_table {
+    width: 95%;
+}
+
+#rate_table td {
+    border: 1px solid var(--md-primary); /* Фиолетовая граница */
+    border-radius: var(--md-radius);
+    padding: 8px;
+}
+
+.settings-toggle {
+    cursor: pointer;
+    padding: 8px 16px;
+    background: var(--md-surface);
+    color: var(--md-text-primary);
+    border-radius: var(--md-radius);
+    transition: var(--md-transition);
+    text-align: center;
+    display: inline-block;
+}
+
+.settings-toggle:hover {
+    background: var(--md-primary-variant);
+}
+
+#winner {
+    width: 150px;
+}
+
+#winner td {
+    text-align: center;
+    cursor: pointer;
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+#winner td:hover {
+    background-color: var(--md-primary-variant); /* Фиолетовый фон при наведении */
+    color: var(--md-text-primary);
+}
+
+.vote_st {
+    background-color: #d1d1d1;
+    color: #ff0000 !important; /* Фиолетовый цвет текста */
+    text-size-adjust: 20px;
+}
+
+.win_team {
+    background-color: var(--md-primary) !important; /* Фиолетовый фон */
+    color: #fff !important;
+}
+
+.vote_nd {
+    background-color: var (--md-primary); /* Фиолетовый фон */
+    color: #fff;
+}
+
+.voute_p {
+    width: 10%;
+    font-size: 22px;
+    text-align: center; /* Центрирование текста */
+    font-weight: bold;
+}
+
+.voute_line:hover {
+    background-color: var(--md-primary-variant); /* Фиолетовый фон при наведении */
+}
+
+.vote-table-mirror td {
+    display: none;
+}
+
+.vote-table tr {
+    display: none;
+}
+
+.hs {
+    display: none;
+}
+
+.settings-toggle-button {
+    position: static;
+    margin: 8px;
+    background: var(--md-primary);
+    color: var(--md-text-primary);
+    border: none;
+    border-radius: var(--md-radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: var(--md-transition);
+}
+
+.settings-toggle-button:hover {
+    background: var(--md-primary-variant);
+}
+
+.target {
+    cursor: pointer;
+    transition: transform 0.3s ease;
+}
+
+.target:hover {
+    transform: scale(1.1);
+}
+
+.tmp {
+    color: #fff;
+}
+
+.add_tag {
+    background-color: rgba(204, 204, 204, 0);
+}
+
+.callc_pick {
+    cursor: pointer;
+}
+
+.calc_butt {
+    border: 0 !important;
+    background-color: rgba(0,0,0,0) !important;
+    width: 100% !important;
+}
+
+.switch {
+    width: 100px;
+    display: inline-table;
+}
+
+.switch td {
+    width: 50%;
+}
+
+.tar_sel {
+    background-color: var(--md-primary); /* Фиолетовый фон */
+    color: var(--md-text-primary);
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.buttons {
+    width: 35px;
+}
+
+.bm_selected {
+    background-color: var(--md-primary) !important; /* Фиолетовый фон */
+    color: #fff !important;
+}
+
+.all_show, .all_hide {
+    width: 15px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.all_show:hover, .all_hide:hover {
+    transform: scale(1.1);
+}
+
+.all_bm_buttons {
+    width: 9.6%;
+    border-right: 1px solid var(--md-primary); /* Фиолетовая граница */
+    display: none;
+}
+
+.all_bm_actions {
+    display: none;
+}
+
+.fk_pick, .fall_click, .role {
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.fk_pick:hover, .fall_click:hover, .remove_click:hover, .role:hover {
+    transform: scale(1.1);
+}
+
+.remove_click {
+    width: 25px;
+    background: url(../images/backspace.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+#point_settings * {
+    margin: 0;
+    padding: 0;
+}
+
+#point_settings input {
+    width: 100%;
+    text-align: center;
+    border: 0;
+}
+
+#point_settings td {
+    text-align: center;
+    border: 1px solid var(--md-primary); /* Фиолетовая граница */
+    border-radius: var (--md-radius);
+}
+
+#game_settings {
+    width: 100%;
+    height: 200px;
+}
+
+.main-game-table-wrapper {
+    width: 50%;
+    float: left;
+}
+
+#game_settings * {
+    margin: 0;
+    padding: 0;
+    font-size: 17px;
+    color: #e4e4e4;
+    font-weight: bold;
+}
+
+#game_settings input {
+    width: 100%;
+    text-align: left;
+    border: 0 !important;
+    background-color: rgba(0,0,0,0) !important;
+    font-weight: lighter;
+    color: gray;
+}
+
+#game_settings .selected {
+    font-weight: bolder;
+    color: #e1e1e1;
+}
+
+#game_settings td {
+    text-align: center;
+    height: 30px;
+}
+
+#save_day {
+    cursor: pointer;
+}
+
+.border_1 {
+    border: 1px solid var(--md-primary); /* Фиолетовая граница */
+    border-radius: var (--md-radius);
+}
+
+.border_0 {
+    border: 0 !important;
+}
+
+.falls_widget, .bm_nick {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+    border: 0 !important;
+}
+
+.falls_widget tbody, .bm_nick tbody, .all_nicks {
+    border: 0 !important;
+}
+
+.nick-container {
+    position: relative;
+    width: 100%;
+}
+
+.bm_nick tbody td {
+    border-top: 0 !important;
+    border-bottom: 0 !important;
+    border-left: 0 !important;
+}
+
+.falls_widget td {
+    padding: 0;
+    margin: 0;
+    border-width: 0;
+}
+
+.fall_0, .fall_1, .fall_2, .fall_3, .fall_4 {
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--md-text-primary);
+    font-weight: bold;
+    border-radius: var(--md-radius);
+}
+
+.fall_0 {
+    visibility: hidden; /* Текст скрыт, но место остается */
+}
+
+.fall_3, .fall_4 {
+    color: red; /* Красный цвет */
+    font-weight: bold; /* Жирный текст */
+    transition: color 0.3s ease; /* Плавное изменение цвета */
+}
+
+.fall_4::after {
+    color: red; /* Красный цвет для символа */
+    margin-left: 5px; /* Отступ от текста */
+}
+
+.fall_active {
+    background-color: rgba(87, 48, 168, 0.7) !important;
+}
+
+.active_line:hover {
+    background-color: #252525;
+}
+
+.bp_select {
+    pointer-events: none; /* Запрещает взаимодействие */
+    user-select: none; /* Запрещает выделение текста */
+    background-color: var(--md-surface-2) !important; /* Визуально показывает что поле нередактируемо */
+}
+
+.role {
+    width: 100%;
+    height: 100%;
+    padding-top: 8px !important;
+    border-radius: var(--md-radius);
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.role:hover {
+    transform: scale(1.1);
+}
+
+#vote_res {
+    width: 80%;
+    height: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff; /* Белый цвет текста */
+    padding: 16px;
+    border-radius: var(--md-radius); /* Скругленные углы */
+    box-shadow: var(--md-elevation-1); /* Легкая тень для глубины */
+    font-size: 1rem;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.vote_day {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 3px;
+    width: 40px;
+    height: 40px;
+    position: relative;
+    background: var(--md-primary); /* Фиолетовый фоновый цвет */
+    border-radius: var(--md-radius); /* Скругленные углы */
+    font-size: 20px;
+    color: #ffffff; /* Белый цвет текста */
+    font-family: "PTSans-Bold";
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.vote_day p {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff; /* Белый цвет текста */
+    font-weight: bold;
+    font-size: 20px;
+    padding: 20px;
+    background: var(--md-primary); /* Фиолетовый фоновый цвет */
+    border-radius: 30%;
+    box-shadow: var(--md-elevation-1); /* Легкая тень для глубины */
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.vote_day p:hover {
+    background: var(--md-primary-variant); /* Темный фиолетовый фон при наведении */
+    color: #ffffff; /* Белый цвет текста при наведении */
+}
+
+.helper {
+    text-align: left;
+    color: #ffffff; /* Белый цвет текста */
+    padding: 16px;
+    position: absolute;
+    background-color: var(--md-primary-variant); /* Темно-фиолетовый фоновый цвет */
+    border-radius: var(--md-radius);
+    width: 150px;
+    margin-left: -10px;
+    margin-top: 5px;
+    top: 50%;
+    left: 50%;
+    visibility: hidden;
+    opacity: 0;
+    z-index: 50;
+    box-shadow: var(--md-elevation-1); /* Легкая тень для глубины */
+    transition: opacity 1.5s ease, top 1s ease, background 0.3s ease, color 0.3s ease;
+}
+
+.to_vote {
+    cursor: pointer;
+}
+
+.vote_day:hover .helper {
+    visibility: visible;
+    opacity: 1;
+    top: 100%;
+}
+
+.vote_day:hover .helper:hover {
+    background: var(--md-primary); /* Фиолетовый фон при наведении */
+    color: #ffffff; /* Белый цвет текста при наведении */
+}
+
+.adv-top {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    #game_settings td {
+        padding: 8px 4px;
+    }
+
+    .vote_butt {
+        padding: 4px 8px;
+        font-size: 14px;
+    }
+
+    .falls_widget, .bm_nick {
+        max-width: 100%;
+    }
+
+    .vote_day {
+        width: 30px;
+        height: 30px;
+        font-size: 16px;
+    }
+
+    .vote_day p {
+        font-size: 16px;
+        padding: 20px;
+    }
+
+    .helper {
+        width: 200px;
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .timer-container {
+        width: 100%;
+        float: none;
+        margin: 0 auto;
+        padding: 0;
+        order: -1; /* Move the timer above the table */
+    }
+
+    .timer-display {
+        font-size: 150px; /* Adjust the size for mobile */
+        margin-bottom: 10px;
+    }
+
+    .falls_widget, .bm_nick {
+        padding: 0;
+        margin: 0;
+    }
+
+    .vote_day {
+        width: 25px;
+        height: 25px;
+        font-size: 14px;
+    }
+
+    .vote_day p {
+        font-size: 14px;
+        padding: 20px;
+    }
+
+    .helper {
+        width: 200px;
+        font-size: 20px;
+        padding: 4px;
+        margin-top: 3px;
+    }
+}
+
+.vote {
+    text-align: center; /* Центрирование текста */
+    display: flex; /* Используем flexbox для центрирования по вертикали и горизонтали */
+    justify-content: center; /* Центрирование по горизонтали */
+    align-items: center; /* Центрирование по вертикали */
+    height: 100%; /* Занимать всю высоту родительского элемента */
+}
+
+.bm_pick {
+    position: relative;
+    cursor: pointer;
+    transition: var (--md-transition);
+    background: var(--md-surface);
+    border-radius: var(--md-radius);
+    padding: 8px;
+    box-shadow: var(--md-elevation-1);
+    color: var(--md-text-primary);
+    display: none;
+}
+
+.bm_pick.show {
+    display: block;
+    position: absolute;
+    z-index: 100;
+    top: 100%;
+    left: 0;
+    background: var(--md-surface-2);
+    box-shadow: var(--md-elevation-2);
+    display: table-cell;
+}
+
+.all_nicks {
+    display: table-cell !important; /* Всегда показываем поле с никнеймом */
+}
+
+.bm_pick:hover {
+    background: var(--md-primary-variant);
+    transform: scale(1.05);
+}
+
+.bm_selected {
+    background: var(--md-primary) !important;
+    color: var(--md-text-primary) !important;
+}
+
+.bm_nick input {
+    background: var(--md-surface);
+    color: var(--md-text-primary);
+    border: 1px solid var(--md-primary);
+    border-radius: var(--md-radius);
+    padding: 8px 12px;
+    transition: var(--md-transition);
+}
+
+.bm_nick input:focus {
+    border-color: var(--md-primary-variant);
+    background: var(--md-surface-2);
+    outline: none;
+}
+
+.bm_nick input:hover {
+    border-color: var(--md-primary-variant);
+}
+
+.settings-toggle {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    background: var(--md-surface);
+    border-radius: var(--md-radius);
+    box-shadow: var(--md-elevation-2);
+    padding: 16px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.player-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.player-button {
+    background: var(--md-primary);
+    color: var(--md-text-primary);
+    border: none;
+    border-radius: var(--md-radius);
+    padding: 16px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+}
+
+.player-button.selected {
+    background: var(--md-primary-variant);
+}
+
+.player-button:hover {
+    transform: scale(1.1);
+}
+
+.settings-toggle-button {
+    position: static;
+    margin: 8px;
+    background: var(--md-primary);
+    color: var(--md-text-primary);
+    border: none;
+    border-radius: var(--md-radius);
+    padding: 8px 16px;
+    cursor: pointer;
+    transition: var(--md-transition);
+    text-align: center;
+    display: inline-block;
+}
+
+.settings-toggle-button:hover {
+    background: var(--md-primary-variant);
+
+
+    .burger-menu-button {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        padding: 10px 20px;
+        background-color: var(--md-primary);
+        color: var(--md-text-primary);
+        border: none;
+        border-radius: var(--md-radius);
+        cursor: pointer;
+        font-size: 16px;
+        z-index: 1000;
+        box-shadow: var(--md-elevation-2);
+        transition: var(--md-transition);
+    }
+
+    .burger-menu-button:hover {
+        background-color: var(--md-primary-variant);
+    }
+
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: var(--md-modal-background);
+        backdrop-filter: blur(var(--md-blur));
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 2000;
+    }
+
+    .modal.show {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .modal-content {
+        background: var(--md-surface);
+        border-radius: var(--md-radius);
+        box-shadow: var(--md-elevation-2);
+        padding: 20px;
+        width: 90%;
+        max-width: 400px;
+        text-align: center;
+    }
+
+    .menu-cont-button {
+        display: block;
+        margin: 10px 0;
+        padding: 10px;
+        background-color: var(--md-primary);
+        color: var(--md-text-primary);
+        border: none;
+        border-radius: var(--md-radius);
+        cursor: pointer;
+        transition: var(--md-transition);
+    }
+
+    .menu-cont-button:hover {
+        background-color: var(--md-primary-variant);
+    }
